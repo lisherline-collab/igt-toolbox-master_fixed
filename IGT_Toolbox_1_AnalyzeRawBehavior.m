@@ -1,4 +1,6 @@
-
+setenv('MW_MINGW64_LOC','D:\Sherline16\000PhD\resources\c_compiler_in_matlab\mingw63');
+mex -setup -v
+%%
 %%%%%%%%%%%%%%%% IGTtoolbox Results - Behavioral Measures %%%%%%%%%%%%%%%%%
 % This script outputs all the behavioral measures which are independent of
 % computational modeling (e.g net scores, directed exploration etc.).
@@ -33,7 +35,7 @@ colormap_custom = 'brewer1';
 
 for s = 1:length(data)
     
-    disp(['subject n�' num2str(s)])
+    disp(['subject n�' num2str(s)])
     
     % subject id and condition id
     subj_id(s,1) = s;
@@ -53,8 +55,8 @@ for s = 1:length(data)
         dumpayoff = cumsum(double(data{s}.deck==d).*(data{s}.win-data{s}.lose))';
         avg_payoff(d,:) = dumpayoff./times_chosen(d,:);
     end
-    avg_payoff = [[NaN;NaN;NaN;NaN],avg_payoff(:,1:end-1)];
-    times_chosen = [[0;0;0;0],times_chosen(:,1:end-1)];
+    avg_payoff = [[NaN;NaN;NaN;NaN],avg_payoff(:,1:end-1)];%for each deck, 累计的
+    times_chosen = [[0;0;0;0],times_chosen(:,1:end-1)];%for each deck, 累计的
 
     % compute win-stay lose-shift metrics
     stay = data{s}.deck(2:end)==data{s}.deck(1:end-1);
@@ -62,7 +64,7 @@ for s = 1:length(data)
     WSLS(s,:) = [mean(stay(~prvloss)) mean(~stay(prvloss))];
     clear stay prvloss
     
-    % evaluate repeat after bigpun
+    % evaluate repeat after bigpun %大惩罚后维持原选择的概率,big loss-stay
     bigpun_ind = find(data{s}.lose<=-1000);
     bigpun_number(s,1) = numel(bigpun_ind);
     if ~isempty(bigpun_ind) && bigpun_ind(end)==100
@@ -88,7 +90,7 @@ for s = 1:length(data)
         end
     end
     tt=0;
-    for t = 1:4:97
+    for t = 1:4:97 %这个_fixed的index跟前面的区别是，滑动窗口的步长不同，这里的窗口不会重叠。只在 t=1,5,9,... 等位置有值，其余位置为 0
         tt=tt+1;
         directed_exploration4_fixed(s,t) = double(numel(unique(data{s}.deck(t:t+3)))==4);
     end
@@ -212,26 +214,26 @@ end
 if test_type==2
     if length(condition_number)==2
         % netscore
-        [stats_all.netscore.nonparam_p, ~, stats_all.netscore.nonparam_stats] = ranksum(netscore_ymat(gmat==min(gmat)),netscore_ymat(gmat==max(gmat)));
-        [~, stats_all.netscore.param_p,  ~, stats_all.netscore.param_stats] = ttest2(netscore_ymat(gmat==min(gmat)),netscore_ymat(gmat==max(gmat)));
+        [stats_all.netscore.nonparam_p, ~, stats_all.netscore.nonparam_stats] = ranksum(netscore_ymat(gmat==1),netscore_ymat(gmat==2));
+        [~, stats_all.netscore.param_p,  ~, stats_all.netscore.param_stats] = ttest2(netscore_ymat(gmat==1),netscore_ymat(gmat==2));
         % WS
-        [stats_all.WS.nonparam_p, ~, stats_all.WS.nonparam_stats] = ranksum(WS_ymat(gmat==min(gmat)),WS_ymat(gmat==max(gmat)));
-        [~, stats_all.WS.param_p, stats_all.WS.param_stats] = ttest2(WS_ymat(gmat==min(gmat)),WS_ymat(gmat==max(gmat)));
+        [stats_all.WS.nonparam_p, ~, stats_all.WS.nonparam_stats] = ranksum(WS_ymat(gmat==1),WS_ymat(gmat==2));
+        [~, stats_all.WS.param_p, stats_all.WS.param_stats] = ttest2(WS_ymat(gmat==1),WS_ymat(gmat==2));
         % LS
-        [stats_all.LS.nonparam_p, ~, stats_all.LS.nonparam_stats] = ranksum(LS_ymat(gmat==min(gmat)),LS_ymat(gmat==max(gmat)));
-        [~, stats_all.LS.param_p,  ~, stats_all.LS.param_stats] = ttest2(LS_ymat(gmat==min(gmat)),LS_ymat(gmat==max(gmat)));
+        [stats_all.LS.nonparam_p, ~, stats_all.LS.nonparam_stats] = ranksum(LS_ymat(gmat==1),LS_ymat(gmat==2));
+        [~, stats_all.LS.param_p,  ~, stats_all.LS.param_stats] = ttest2(LS_ymat(gmat==1),LS_ymat(gmat==2));
         % MI_successive_choices
-        [stats_all.MI_successive_choices.nonparam_p, ~, stats_all.MI_successive_choices.nonparam_stats] = ranksum(MI_successive_choices_ymat(gmat==min(gmat)),MI_successive_choices_ymat(gmat==max(gmat)));
-        [~, stats_all.MI_successive_choices.param_p, ~,  stats_all.MI_successive_choices.param_stats] = ttest2(MI_successive_choices_ymat(gmat==min(gmat)),MI_successive_choices_ymat(gmat==max(gmat)));
+        [stats_all.MI_successive_choices.nonparam_p, ~, stats_all.MI_successive_choices.nonparam_stats] = ranksum(MI_successive_choices_ymat(gmat==1),MI_successive_choices_ymat(gmat==2));
+        [~, stats_all.MI_successive_choices.param_p, ~,  stats_all.MI_successive_choices.param_stats] = ttest2(MI_successive_choices_ymat(gmat==1),MI_successive_choices_ymat(gmat==2));
         % H_choices
-        [stats_all.H_choices.nonparam_p, ~, stats_all.H_choices.nonparam_stats] = ranksum(H_choices_ymat(gmat==min(gmat)),H_choices_ymat(gmat==max(gmat)));
-        [~, stats_all.H_choices.param_p, ~,  stats_all.H_choices.param_stats] = ttest2(H_choices_ymat(gmat==min(gmat)),H_choices_ymat(gmat==max(gmat)));
+        [stats_all.H_choices.nonparam_p, ~, stats_all.H_choices.nonparam_stats] = ranksum(H_choices_ymat(gmat==1),H_choices_ymat(gmat==2));
+        [~, stats_all.H_choices.param_p, ~,  stats_all.H_choices.param_stats] = ttest2(H_choices_ymat(gmat==1),H_choices_ymat(gmat==2));
         % DE3
-        [stats_all.DE3.nonparam_p, ~, stats_all.DE3.nonparam_stats] = ranksum(DE3_ymat(gmat==min(gmat)),DE3_ymat(gmat==max(gmat)));
-        [~, stats_all.DE3.param_p, stats_all.DE3.param_stats] = ttest2(DE3_ymat(gmat==min(gmat)),DE3_ymat(gmat==max(gmat)));
+        [stats_all.DE3.nonparam_p, ~, stats_all.DE3.nonparam_stats] = ranksum(DE3_ymat(gmat==1),DE3_ymat(gmat==2));
+        [~, stats_all.DE3.param_p, stats_all.DE3.param_stats] = ttest2(DE3_ymat(gmat==1),DE3_ymat(gmat==2));
         % DE4
-        [stats_all.DE4.nonparam_p, ~, stats_all.DE4.nonparam_stats] = ranksum(DE4_ymat(gmat==min(gmat)),DE4_ymat(gmat==max(gmat)));
-        [~, stats_all.DE4.param_p, ~, stats_all.DE4.param_stats] = ttest2(DE4_ymat(gmat==min(gmat)),DE4_ymat(gmat==max(gmat)));
+        [stats_all.DE4.nonparam_p, ~, stats_all.DE4.nonparam_stats] = ranksum(DE4_ymat(gmat==1),DE4_ymat(gmat==2));
+        [~, stats_all.DE4.param_p, ~, stats_all.DE4.param_stats] = ttest2(DE4_ymat(gmat==1),DE4_ymat(gmat==2));
     elseif length(condition_number)>2
         % netscore
         [stats_all.netscore.param_p, stats_all.netscore.param_table, stats_all.netscore.stats] = anova1(netscore_ymat, gmat, 'off');
@@ -260,26 +262,26 @@ if test_type==2
 else
     if length(condition_number)==2
         % netscore
-        [stats_all.netscore.nonparam_p, ~, stats_all.netscore.nonparam_stats] = signrank(netscore_ymat(gmat==min(gmat)),netscore_ymat(gmat==max(gmat)));
-        [~, stats_all.netscore.param_p, stats_all.netscore.param_stats] = ttest(netscore_ymat(gmat==min(gmat)),netscore_ymat(gmat==max(gmat)));
+        [stats_all.netscore.nonparam_p, ~, stats_all.netscore.nonparam_stats] = signrank(netscore_ymat(gmat==1),netscore_ymat(gmat==2));
+        [~, stats_all.netscore.param_p, stats_all.netscore.param_stats] = ttest(netscore_ymat(gmat==1),netscore_ymat(gmat==2));
         % WS
-        [stats_all.WS.nonparam_p, ~, stats_all.WS.nonparam_stats] = signrank(WS_ymat(gmat==min(gmat)),WS_ymat(gmat==max(gmat)));
-        [~, stats_all.WS.param_p, stats_all.WS.param_stats] = ttest(WS_ymat(gmat==min(gmat)),WS_ymat(gmat==max(gmat)));
+        [stats_all.WS.nonparam_p, ~, stats_all.WS.nonparam_stats] = signrank(WS_ymat(gmat==1),WS_ymat(gmat==2));
+        [~, stats_all.WS.param_p, stats_all.WS.param_stats] = ttest(WS_ymat(gmat==1),WS_ymat(gmat==2));
         % LS
-        [stats_all.LS.nonparam_p, ~, stats_all.LS.nonparam_stats] = signrank(LS_ymat(gmat==min(gmat)),LS_ymat(gmat==max(gmat)));
-        [~, stats_all.LS.param_p, stats_all.LS.param_stats] = ttest(LS_ymat(gmat==min(gmat)),LS_ymat(gmat==max(gmat)));
+        [stats_all.LS.nonparam_p, ~, stats_all.LS.nonparam_stats] = signrank(LS_ymat(gmat==1),LS_ymat(gmat==2));
+        [~, stats_all.LS.param_p, stats_all.LS.param_stats] = ttest(LS_ymat(gmat==1),LS_ymat(gmat==2));
         % MI_successive_choices
-        [stats_all.MI_successive_choices.nonparam_p, ~, stats_all.MI_successive_choices.nonparam_stats] = signrank(MI_successive_choices_ymat(gmat==min(gmat)),MI_successive_choices_ymat(gmat==max(gmat)));
-        [~, stats_all.MI_successive_choices.param_p, stats_all.MI_successive_choices.param_stats] = ttest(MI_successive_choices_ymat(gmat==min(gmat)),MI_successive_choices_ymat(gmat==max(gmat)));
+        [stats_all.MI_successive_choices.nonparam_p, ~, stats_all.MI_successive_choices.nonparam_stats] = signrank(MI_successive_choices_ymat(gmat==1),MI_successive_choices_ymat(gmat==2));
+        [~, stats_all.MI_successive_choices.param_p, stats_all.MI_successive_choices.param_stats] = ttest(MI_successive_choices_ymat(gmat==1),MI_successive_choices_ymat(gmat==2));
         % H_choices
-        [stats_all.H_choices.nonparam_p, ~, stats_all.H_choices.nonparam_stats] = signrank(H_choices_ymat(gmat==min(gmat)),H_choices_ymat(gmat==max(gmat)));
-        [~, stats_all.H_choices.param_p, stats_all.H_choices.param_stats] = ttest(H_choices_ymat(gmat==min(gmat)), H_choices_ymat(gmat==max(gmat)));
+        [stats_all.H_choices.nonparam_p, ~, stats_all.H_choices.nonparam_stats] = signrank(H_choices_ymat(gmat==1),H_choices_ymat(gmat==2));
+        [~, stats_all.H_choices.param_p, stats_all.H_choices.param_stats] = ttest(H_choices_ymat(gmat==1), H_choices_ymat(gmat==2));
         % DE3
-        [stats_all.DE3.nonparam_p, ~, stats_all.DE3.nonparam_stats] = signrank(DE3_ymat(gmat==min(gmat)),DE3_ymat(gmat==max(gmat)));
-        [~, stats_all.DE3.param_p, stats_all.DE3.param_stats] = ttest(DE3_ymat(gmat==min(gmat)), DE3_ymat(gmat==max(gmat)));
+        [stats_all.DE3.nonparam_p, ~, stats_all.DE3.nonparam_stats] = signrank(DE3_ymat(gmat==1),DE3_ymat(gmat==2));
+        [~, stats_all.DE3.param_p, stats_all.DE3.param_stats] = ttest(DE3_ymat(gmat==1), DE3_ymat(gmat==2));
         % DE4
-        [stats_all.DE4.nonparam_p, ~, stats_all.DE4.nonparam_stats] = signrank(DE4_ymat(gmat==min(gmat)),DE4_ymat(gmat==max(gmat)));
-        [~, stats_all.DE4.param_p, stats_all.DE4.param_stats] = ttest(DE4_ymat(gmat==min(gmat)), DE4_ymat(gmat==max(gmat)));
+        [stats_all.DE4.nonparam_p, ~, stats_all.DE4.nonparam_stats] = signrank(DE4_ymat(gmat==1),DE4_ymat(gmat==2));
+        [~, stats_all.DE4.param_p, stats_all.DE4.param_stats] = ttest(DE4_ymat(gmat==1), DE4_ymat(gmat==2));
     elseif length(condition_number)>2
         % netscore
         [stats_all.netscore.param_p, stats_all.netscore.param_table] = anova_rm(cell2mat(stats_all.netscore.mat), 'off');

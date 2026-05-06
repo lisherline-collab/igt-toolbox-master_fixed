@@ -15,7 +15,7 @@ clear all;close all;
 % unexperienced with computational modeling will modify.
 
 % 1) Models that the toolbox is going to fit to your data
-A.fit.models = {@run_VSE, @run_PVL, @run_PVLdelta, @run_VPP, @run_VSE_LA, @run_ORL, @run_EV};
+A.fit.models = {@run_VSE, @run_PVL, @run_PVLdelta, @run_VPP, @run_VSE_LA, @run_EV};
 
 % 2) Types of priors to be used: 'informed','flat' or 'shrinkage'
 % 'informed' priors are based on the distributions of parameters obtained
@@ -29,11 +29,11 @@ A.fit.priors.type = 'flat';
 % 3) Should the toolbox perform Bayesian Model Comparison in order to
 % determine which model fits best your data at the end of the analysis
 % yes = 1 / no = 0;
-A.comparison.do = 0;
+A.comparison.do = 1;
 
 % 6) Output_name (determines directory in which output of the fit is
 % written
-A.output_name = 'toydata';
+A.output_name = 'test_toydata5subjects_flat';
 
 % 6) Should the toolbox save all the information (can be >100mb per model)
 % or just a summary? yes = 1 / no = 0
@@ -61,14 +61,14 @@ A.cluster_run = 0;
 % If you have different groups define carefully data{}.cond and
 % data{}.cond_label, as those will be used automatically at the end of the
 % analysis. 
-load('IGTdata/toydata/IGTdata.mat');
+load('D:\Sherline16\000PhD\000project_IGT\seafile_IGT\00implementation_behavio_computational\IGT_Toolbox\igt-toolbox-master\IGTdata\toydata_5subjects\IGTdata.mat');
 
 %% Specific settings
 % These settings offer more flexibility in the analysis.
 
 % 1) Maximal number of subject on which the fit should be performed. Can be
 % useful to use a small number (e.g 5) to check if everything works fine.
-A.fit.maxsubjects = 1;
+A.fit.maxsubjects = 5;%%need to be change
 
 % 2) Number of trials in the version of the IGT tested. The standard
 % version of the IGT has 100 trials, but some modified versions have 150 or

@@ -87,6 +87,7 @@ switch A.fit.priors.type
         Tsig0to5 = Traw;
         Tsig0to2 = Traw;
         TsigMin2to2 = Traw;
+        TsigMin10to10 = Traw;
 
     otherwise
 

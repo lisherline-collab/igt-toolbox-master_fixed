@@ -61,7 +61,7 @@ for m = 1:size(model_list,1)
         load([model_dir model_list{m} '/' submodellist(mm).name '/fitted_model.mat'],'R');
         
         % get Goodness of fit metrics
-        AIC{m}(mm, :) = R.GoF(:,3);
+        AIC{m}(mm, :) = R.GoF(:,3);% for each submodel(mm) based on each model(m)
         F{m}(mm, :) = R.GoF(:,1);
         BIC{m}(mm, :) = R.GoF(:,2);
         LL{m}(mm, :) = R.GoF(:,4);
